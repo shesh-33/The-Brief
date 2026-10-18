@@ -44,3 +44,20 @@ Images are optional. Use licensed or publisher-permitted image URLs; absent imag
 - Native interactive iPhone Home Screen widgets are not possible with a standalone PWA; the app icon opens the full interface.
 - Copying a rich ChatGPT reply into plain text may omit or mangle images and citations. JSON imports are most reliable.
 - On iOS, the browser may sometimes evict cached files; opening online restores them.
+
+## NEW: Automatic daily updates with GitHub Actions
+
+The downloaded upgrade includes `.github/workflows/daily-brief.yml` and `generate_daily.py`. **Upload the new files, including the hidden `.github` directory, to the root of your existing repository.** You do not need a new repository. `app.js` now automatically fetches `daily.json` from the same website when opened. New data appears automatically after the workflow publishes; your existing Home Screen icon keeps working.
+
+### One-time setup on GitHub
+1. Create an OpenAI API key at https://platform.openai.com/api-keys and add API billing/usage limits if needed. **The API is a separately billed product; a ChatGPT subscription does not cover it.**
+2. In your GitHub repository, select **Settings → Secrets and variables → Actions → New repository secret**. Name it exactly `OPENAI_API_KEY`, and paste the API key into the value field. **Never put the key in a public file or share it in chat.**
+3. Under **Settings → Actions → General → Workflow permissions**, select **Read and write permissions** if your repository's policy requires it. Save. The workflow also declares `contents: write`.
+4. In the **Actions** tab, select **Publish daily economics briefing → Run workflow** to test it. When the run succeeds, the repository's `daily.json` will change. Check that it contains five verifiable links.
+5. Open the iPhone app online. It automatically loads `daily.json`. In app Settings, use **Refresh now** if needed. An existing custom feed URL overrides the default; clear it and save to restore the default feed URL, or use your Pages URL plus `/daily.json`.
+
+The workflow starts at **7:40 AM America/Chicago** to aim for an edition around 8:00 AM, but **GitHub Actions scheduled jobs are not guaranteed to start precisely on time**. On failure, the previously published file remains available; inspect the Actions log. Scheduled workflows in public repositories may be disabled after 60 days of no activity. The workflow must be present on the default branch. Source checking is model-based and not a substitute for editorial fact-checking.
+
+**This is a separate daily AI-generated briefing.** ChatGPT's built-in scheduled task cannot directly publish its response to GitHub or supply the API key to this job. The content can be similar but will not be exactly the same. It uses OpenAI API web search, which has usage charges. The image field remains blank deliberately: automatically hotlinking publisher images without permission is unreliable and can violate image reuse terms; the app displays its visual fallback.
+
+To disable automated updates, disable the workflow under GitHub Actions. Your existing ChatGPT scheduled task is unaffected.

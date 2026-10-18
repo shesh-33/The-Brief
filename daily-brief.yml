@@ -1,0 +1,44 @@
+name: Publish daily economics briefing
+
+on:
+  schedule:
+    - cron: '40 7 * * *'
+      timezone: 'America/Chicago'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-brief-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out site
+        uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install OpenAI SDK
+        run: python -m pip install 'openai>=1.80,<4'
+      - name: Generate five verified stories
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          BRIEF_MODEL: gpt-5-mini
+        run: python generate_daily.py
+      - name: Commit the new edition
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add daily.json
+          if git diff --cached --quiet; then
+            echo 'No changes to publish'
+          else
+            git commit -m 'Publish daily brief'
+            git push
+          fi
