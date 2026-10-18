@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-18",
+  "stories": [
+    {"id":"1","category":"Macroeconomics","headline":"Why elevated borrowing costs constrain public budgets","summary":"Government debt-service costs can limit the fiscal response to new economic shocks. The key issue is how real borrowing costs compare with economic growth.","why":"A country can experience GDP growth and still lose fiscal space.","source":"IMF","url":"https://www.imf.org/en/Publications/WEO","emoji":"🏛️"},
+    {"id":"2","category":"Development economics","headline":"Can smaller AI models help close productivity gaps?","summary":"Localized AI tools could reduce information frictions in agriculture and public services.","why":"Adoption and complementary infrastructure determine the returns to new technology.","source":"World Bank","url":"https://www.worldbank.org/en/topic/digitaldevelopment","emoji":"🌱"},
+    {"id":"3","category":"International economics","headline":"The economics behind energy sanctions","summary":"Restricting commodity exports can affect both quantities and world prices.","why":"The incidence of sanctions depends on supply, demand and trade diversion.","source":"Peterson Institute","url":"https://www.piie.com/","emoji":"🌍"},
+    {"id":"4","category":"AI and finance","headline":"AI infrastructure changes the investment equation","summary":"Large up-front capital costs and uncertain future revenues shape investment in computing infrastructure.","why":"Social gains from innovation and private profits can diverge.","source":"NBER","url":"https://www.nber.org/","emoji":"◈"},
+    {"id":"5","category":"Econometrics","headline":"RCTs do not automatically identify every treatment effect","summary":"Randomization identifies effects of assignment, but conditioning on participation needs more assumptions.","why":"Post-treatment selection can reintroduce bias.","source":"NBER","url":"https://www.nber.org/papers","emoji":"∑"}
+  ]
+}
