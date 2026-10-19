@@ -1,13 +1,10 @@
-# The Brief — Full Story Import
+# The Brief — Verbatim import diagnostic
 
-This upgrade preserves **the entire text of each of the five numbered stories**, including every section, paragraphs, lists, markdown hyperlinks, equations in readable text, and tables. It keeps the original heading, swipe controls, and saved state.
+Replace `index.html`, `app.js`, and `sw.js` in the **existing** GitHub Pages repository. Allow Pages to publish the changes, then fully close and reopen the iPhone Home Screen app.
 
-## Update
-Upload `index.html`, `app.js`, and `sw.js` to your existing GitHub Pages repository, replacing their earlier versions. Reload the app after GitHub Pages deploys. You may need to close and reopen the Home Screen app to get the new JavaScript.
+Copy the **full original ChatGPT briefing**, including all five numbered stories. In The Brief → Settings, paste and import it again. Open Today's first card and scroll down to **Full original briefing → View original text**. This stores the entire pasted clipboard text, verbatim, separately from the parsed story cards. Compare the original to the cards.
 
-## Reimport
-The previously imported briefing was already truncated by the old importer; it cannot be restored from that truncated stored copy. Copy the complete original ChatGPT briefing again, open Settings → Import today's edition, paste, then Import briefing.
+- If the detailed content is **in the original but not the cards**, the parsing/rendering needs work.
+- If the content is **not in the original**, ChatGPT's copy operation did not contain it; the app cannot recover it. Try copying the full message on the Mac, or copying as Markdown if ChatGPT offers that option.
 
-All imported text stays on your device. Link URLs survive only if included in the copied content as Markdown or plain URLs; ChatGPT's rich source citations may not copy as usable addresses. Images and mathematical typesetting may not survive copying; LaTeX source remains readable.
-
-No API key needed.
+The app reports character counts for individual story cards upon import. JSON exports remain available in Settings. Image widgets, interactive UI and rich citation links may not survive plain-text copying. No API key necessary.
