@@ -26,11 +26,12 @@ function render(){document.querySelectorAll('.nav button').forEach(b=>b.classLis
 if(page==='today')today();else if(page==='saved')saved();else if(page==='archive')archivePage();else settings();renderMath();}
 function today(){const st=current();const unread=bundle.stories.filter(s=>!st.dismissed.includes(s.id));const done=bundle.stories.length-unread.length;let out=header(bundle.isDemo?'Interactive preview · Replace with your briefing':'Your daily five · '+(bundle.date||''),'The morning edit.',`${prettyDate(bundle.date)} · ${bundle.stories.length} selected stories`);
 out+=`<div class="progress-head"><strong>${done} of ${bundle.stories.length} read</strong><span>${unread.length} remaining</span></div><div class="track"><div class="fill" style="width:${bundle.stories.length?100*done/bundle.stories.length:0}%"></div></div><div class="tabs"><button class="tab selected">Unread (${unread.length})</button><button class="tab" id="showAll">All stories (${bundle.stories.length})</button></div>`;
+out+=`<div class="quick-import"><div><strong>New briefing ready?</strong><span>Copy the complete ChatGPT response, then import it here.</span></div><button class="btn dark" id="quickImport">📋 Import copied briefing</button></div>`;
 if(bundle.isDemo)out+='<div class="notice">These five stories are illustrative placeholders, not a live October 18 news feed. Import your own daily briefing in Settings.</div>';
 if(!unread.length)out+=`<div class="empty"><div style="font-size:37px">✦</div><h2>All caught up.</h2><p>You've finished all five stories. Come back tomorrow for your next edition.</p><button class="btn" id="resetToday">Restore today's stories</button></div>`;
 else out+=card(unread[0],bundle.stories.indexOf(unread[0])+1);
 if(original&&!bundle.isDemo)out+=`<div class="settings-card"><h3>Full original briefing</h3><p>This is the exact text received when you imported. Compare it with the cards to find out whether copying or formatting lost content.</p><div class="linkrow"><button class="btn dark" id="showOriginal">View original text (${original.length.toLocaleString()} characters)</button></div></div>`;
-out+=`<div class="tiny">Swipe left to dismiss · Swipe right to save for later<br>Reading progress stays on this device</div>`;view.innerHTML=out;wireCards();document.querySelector('#resetToday')?.addEventListener('click',()=>{current().dismissed=[];persist();render()});document.querySelector('#showAll')?.addEventListener('click',showAll);document.querySelector('#showOriginal')?.addEventListener('click',showOriginal)}
+out+=`<div class="tiny">Swipe left to dismiss · Swipe right to save for later<br>Reading progress stays on this device</div>`;view.innerHTML=out;wireCards();document.querySelector('#resetToday')?.addEventListener('click',()=>{current().dismissed=[];persist();render()});document.querySelector('#showAll')?.addEventListener('click',showAll);document.querySelector('#showOriginal')?.addEventListener('click',showOriginal);document.querySelector('#quickImport')?.addEventListener('click',quickImport)}
 function richInline(t){
  let escaped=escapeHTML(t);
  escaped=escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,(all,label,url)=>`<a href="${escapeHTML(safeURL(url))}" target="_blank" rel="noopener noreferrer">${label}</a>`);
@@ -119,7 +120,29 @@ function parsePlain(t){
  });
  return normalize({date,stories:all});
 }
-function importText(){let t=document.querySelector('#paste').value.trim();if(!t)return toast('Paste your briefing first');try{let data;try{data=normalize(JSON.parse(t))}catch(e){if(t.startsWith('{'))throw e;data=parsePlain(t)}bundle=data;original=t;localStorage.setItem(RAWKEY,original);persist();archiveEdition();page='today';render();const lengths=data.stories.map(s=>(s.body||s.summary).length);toast('Imported 5: '+lengths.join(' / ')+' characters each')}catch(e){let el=document.querySelector('#msg');el.className='notice error';el.textContent=e.message}}
+function importBriefing(t){
+ t=String(t||'').trim();if(!t)throw Error('Clipboard is empty. Copy the entire ChatGPT briefing first.');
+ let data;try{data=normalize(JSON.parse(t))}catch(e){if(t.startsWith('{'))throw e;data=parsePlain(t)}
+ // Never overwrite the active edition until all five stories validated successfully.
+ bundle=data;original=t;localStorage.setItem(RAWKEY,original);persist();archiveEdition();page='today';render();
+ toast('Imported all five full stories · '+t.length.toLocaleString()+' characters preserved');
+}
+function importText(){let t=document.querySelector('#paste').value;try{importBriefing(t)}catch(e){let el=document.querySelector('#msg');if(el){el.className='notice error';el.textContent=e.message}else toast(e.message)}}
+async function quickImport(){
+ const button=document.querySelector('#quickImport');if(button){button.disabled=true;button.textContent='Reading clipboard…'}
+ try{
+  if(!navigator.clipboard?.readText)throw Error('Clipboard access is not available in this iPhone app.');
+  const copied=await navigator.clipboard.readText();
+  importBriefing(copied);
+ }catch(e){
+  // On iOS, clipboard permission can be refused in standalone web apps.
+  // Offer the existing tested paste workflow instead of losing content.
+  const msg=e?.name==='NotAllowedError'?'iOS blocked clipboard access.':'Could not import automatically: '+(e.message||'unknown error')+'.';
+  page='settings';render();const area=document.querySelector('#paste');area?.focus();
+  const el=document.querySelector('#msg');if(el){el.className='notice error';el.textContent=msg+' Long-press in the field above, tap Paste, then Import briefing.'}
+ }
+ finally{if(button?.isConnected){button.disabled=false;button.textContent='📋 Import copied briefing'}}
+}
 async function refreshFeed(manual=false){if(!feed){if(manual)toast('Save a feed URL first');return}try{let controller=new AbortController();let signal=controller.signal;let tm=setTimeout(()=>controller.abort(),8000);let r=await fetch(feed,{cache:'no-store',signal});clearTimeout(tm);if(!r.ok)throw Error('HTTP '+r.status);let next=normalize(await r.json());if(next.date!==bundle.date||bundle.isDemo){bundle=next;original='';persist();archiveEdition();if(page==='today')render();toast('Fresh edition loaded')}else if(manual)toast('Already up to date')}catch(e){if(manual)toast('Feed failed: '+e.message)}}
 function download(name,content){let b=new Blob([content],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),500)}
 if(!bundle.isDemo&&!archive[bundle.date])archiveEdition();window.addEventListener('brief-math-ready',renderMath);document.querySelector('#topSettings').onclick=()=>{page='settings';render()};document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{page=b.dataset.page;render();window.scrollTo(0,0)});render();if(!manualMode)refreshFeed(false);if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
