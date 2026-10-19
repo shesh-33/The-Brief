@@ -1,22 +1,13 @@
-# The Brief — free manual ChatGPT import
+# The Brief — Full Story Import
 
-## Install this update in your existing GitHub Pages app
+This upgrade preserves **the entire text of each of the five numbered stories**, including every section, paragraphs, lists, markdown hyperlinks, equations in readable text, and tables. It keeps the original heading, swipe controls, and saved state.
 
-1. Unzip the download on your Mac.
-2. Open the existing GitHub repository for The Brief, and upload these files at the **repository root**: `index.html`, `app.js`, `sw.js`, `manifest.webmanifest`, `icon-192.png`, and `icon-512.png`. Replace existing versions.
-3. Delete `.github/workflows/daily-brief.yml` or disable its scheduled workflow under GitHub **Actions** if you previously uploaded it. It is unnecessary and will fail without an API key. You can also delete `generate_daily.py`.
-4. Give GitHub Pages a moment to publish. On your iPhone, close and reopen The Brief. If the older version persists, open the GitHub Pages URL in Safari and refresh it before returning to the Home Screen app.
+## Update
+Upload `index.html`, `app.js`, and `sw.js` to your existing GitHub Pages repository, replacing their earlier versions. Reload the app after GitHub Pages deploys. You may need to close and reopen the Home Screen app to get the new JavaScript.
 
-## Import your five daily stories
+## Reimport
+The previously imported briefing was already truncated by the old importer; it cannot be restored from that truncated stored copy. Copy the complete original ChatGPT briefing again, open Settings → Import today's edition, paste, then Import briefing.
 
-1. Open the ChatGPT daily briefing and tap **Copy** on the complete response. Include the numbered story headlines.
-2. Open **The Brief** on your iPhone, tap **Settings**, paste in **Import today's edition**, then tap **Import briefing**.
-3. Tap **Today**. You'll see the five stories as cards. Swipe left or press Done reading to dismiss; swipe right or press Save to bookmark.
+All imported text stays on your device. Link URLs survive only if included in the copied content as Markdown or plain URLs; ChatGPT's rich source citations may not copy as usable addresses. Images and mathematical typesetting may not survive copying; LaTeX source remains readable.
 
-No API key, subscription, secrets, server, or extra app needed. The content and reading state remain in that device's local storage.
-
-**Important limitations:** Rich embedded citation widgets from ChatGPT may not become regular URLs when copied. The importer preserves normal Markdown or bare HTTPS links but cannot reconstruct missing source URLs. Photos embedded in ChatGPT responses are not reliably copyable and will appear as visual placeholders unless you import an image URL through JSON. Text import is heuristic—review imported cards, especially headlines and summaries. The hosted `daily.json` feed is now **off by default** to protect manual imports.
-
-## Formatting tip
-
-If copying a highly formatted ChatGPT briefing doesn't work, ask ChatGPT to reformat today's five stories as a plain Markdown list numbered 1–5, including a two-paragraph summary, a `Why it matters` section, and normal Markdown links to sources. Copy that and import it.
+No API key needed.
